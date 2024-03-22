@@ -14,13 +14,25 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final ChatBloc chatBloc = ChatBloc();
   TextEditingController textEditingController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: BlocConsumer<ChatBloc, ChatState>(
           bloc: chatBloc,
-          listener: (context, state) {},
+          listener: (context, state) {
+            if (state is ChatSuccessState) {
+              // After the list rebuilds, scroll to the bottom
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                scrollController.animateTo(
+                  scrollController.position.maxScrollExtent,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeIn,
+                );
+              });
+            }
+          },
           builder: (context, state) {
             switch (state.runtimeType) {
               case ChatSuccessState:
@@ -46,6 +58,7 @@ class _HomePageState extends State<HomePage> {
                       Expanded(
                         child:
                             ListView.builder(
+                            controller: scrollController,
                             itemCount: messages.length,
                             itemBuilder: (context, index) {
                               return Row(
@@ -91,6 +104,7 @@ class _HomePageState extends State<HomePage> {
                         child: Row(
                           children: [
                             Expanded(
+                                
                                 child: TextField(
                                   controller: textEditingController,
                                   decoration: InputDecoration(
