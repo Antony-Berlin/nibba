@@ -85,29 +85,7 @@ class _HomePageState extends State<HomePage> {
                               );
                             })
                       ),
-                      if(chatBloc.generating)
-                      Row(
-                        children: [
-                          const SizedBox(width: 20,),
-                          Container(
-                            height: 60,
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Text(
-                              "Typing ...",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.deepPurple.shade400,
-                                  fontSize: 22,
-                                  fontFamily: 'dekko'),
-                                                        ),
-                            ),
-                          ),
-                          
-                          
-                          
-                        ],
-                      ),
+                      
                       Container(
                         padding: EdgeInsets.symmetric(vertical: 30, horizontal: 15),
                         child: Row(
