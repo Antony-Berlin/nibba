@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nibba/bloc/chat_bloc.dart';
 import 'package:nibba/models/chat_message_model.dart';
-import 'package:lottie/lottie.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,6 +18,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: const Color(0xFF584cd7),
         body: BlocConsumer<ChatBloc, ChatState>(
           bloc: chatBloc,
           listener: (context, state) {
@@ -44,30 +44,38 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Container(
                         height: 100,
-                        child: Center(
+                        
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: const Color(0xff7b70ee),
+                        ),
+                        child: const Center(
                           child: Text(
                             "Nibba",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.deepPurple.shade400,
+                                color: Color(0xFFfefefe),
                                 fontSize: 35,
                                 fontFamily: 'dekko'),
                           ),
                         ),
                       ),
                       Expanded(
+                        
                         child:
                             ListView.builder(
                             controller: scrollController,
                             itemCount: messages.length,
                             itemBuilder: (context, index) {
                               return Row(
+                                
                                 children: [
-                                  SizedBox(width: messages[index].role=="user"? 30:0,),
-                                  Expanded(
-                                    child: Container(
-                                      margin: EdgeInsets.all(10),
-                                      padding: EdgeInsets.all(16),
+                                  if (messages[index].role=="user")
+                                   Expanded( child:Container()),
+                                  Container(
+                                      constraints: BoxConstraints(minWidth: 80, maxWidth: 300),
+                                      margin: const EdgeInsets.all(10),
+                                      padding: const EdgeInsets.all(16),
                                       decoration: BoxDecoration(
                                       borderRadius: messages[index].role=="user"
                                                     ? const BorderRadius.only(topLeft: Radius.circular(16),
@@ -80,43 +88,51 @@ class _HomePageState extends State<HomePage> {
                                                             bottomLeft: Radius.circular(16),
                                                             bottomRight: Radius.circular(16)
                                                             ),
-                                      color: messages[index].role == "user" ? Colors.deepPurple.shade100: Colors.deepPurple.shade400
+                                      color: messages[index].role == "user" ? const Color(0xFFfefefe): const Color(0xff7b70ee)
                                       ),
                                       child:
                                           Text(
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                color: messages[index].role=="user"?Colors.deepPurple:const Color.fromRGBO(237, 231, 246, 1),
+                                                color: messages[index].role=="user"?const Color(0xFF635e8c):const Color(0xFFfefefe),
                                                 fontFamily: 'dekko'),
                                             messages[index].parts.first.text
                                           )
                                       ),
-                                  ),
-                                  
-                                  SizedBox(width: messages[index].role=="user"? 0:30,),
+                                  if (messages[index].role=="model")
+                                   Expanded( child:Container()),
                                 ],
                               );
                             })
                       ),
                       
                       Container(
-                        padding: EdgeInsets.symmetric(vertical: 30, horizontal: 15),
+                        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
                         child: Row(
                           children: [
                             Expanded(
                                 
                                 child: TextField(
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xff635e8c),
+                                  ),
                                   controller: textEditingController,
                                   decoration: InputDecoration(
-                                      fillColor: Color.fromARGB(255, 202, 197, 210),
+                                      fillColor: const Color(0xFFfefefe),
                                       filled: true,
                                       border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(50)
+                                          
+                                          borderRadius: BorderRadius.circular(50),
+                                          borderSide: const BorderSide(
+                                            color: Color(0xFF7b70ee),
+                                            width: 2
+                                          ),
                                         ),
                                       focusedBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(50),
-                                          borderSide: BorderSide(
-                                            color: Theme.of(context).primaryColor,
+                                          borderSide: const BorderSide(
+                                            color: Color(0xFF7b70ee),
                                           )
                                         )
                                     ),
@@ -133,16 +149,16 @@ class _HomePageState extends State<HomePage> {
                                   chatBloc.add(ChatGenerateNewTextMessageEvent(inputMessage: text));
                                 }
                               },
-                              child: CircleAvatar(
+                              child: const CircleAvatar(
                                 radius: 32,
-                                backgroundColor: Colors.deepPurple.shade400,
+                                backgroundColor: Color(0xFF7b70ee),
                                 child: CircleAvatar(
                                   radius: 30,
-                                  backgroundColor: Colors.white,
+                                  backgroundColor: Color(0xFFfefefe),
                                   child: Center(
                                     child: Icon(
                                       Icons.send,
-                                      color: Colors.deepPurple.shade400,
+                                      color: Color(0xFF584cd7),
                                     ),
                                   ),
                                 ),
@@ -156,7 +172,7 @@ class _HomePageState extends State<HomePage> {
                 );
                 
               default:
-                return SizedBox();
+                return const SizedBox();
             }
           },
         )
