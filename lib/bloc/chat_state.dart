@@ -10,3 +10,9 @@ class ChatSuccessState extends ChatState{
 
   ChatSuccessState({required this.messages});
 }
+
+class EligibiltyCheckState extends ChatState{
+  final List<EliesModel> elies;
+
+  EligibiltyCheckState({required this.elies});
+}

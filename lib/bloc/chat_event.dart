@@ -9,3 +9,19 @@ class ChatGenerateNewTextMessageEvent extends ChatEvent {
     required this.inputMessage,
   });
 }
+
+class EligibiltyCheckEvent extends ChatEvent {
+  final int index;
+  EligibiltyCheckEvent({
+    required this.index,
+  });
+  
+}
+
+class EligibilityResultEvent extends ChatEvent {
+  final String result;
+  EligibilityResultEvent({
+    required this.result,
+  });
+  
+}

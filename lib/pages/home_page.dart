@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nibba/bloc/chat_bloc.dart';
 import 'package:nibba/models/chat_message_model.dart';
+import 'package:nibba/models/elies_model.dart';
+import 'package:nibba/pages/questionWidget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,6 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final ChatBloc chatBloc = ChatBloc();
+  List<String> answers = [];
   TextEditingController textEditingController = TextEditingController();
   final ScrollController scrollController = ScrollController();
 
@@ -36,7 +39,7 @@ class _HomePageState extends State<HomePage> {
           builder: (context, state) {
             switch (state.runtimeType) {
               case ChatSuccessState:
-              List<ChatMessageModel> messages = (state as ChatSuccessState).messages; 
+                List<ChatMessageModel> messages = (state as ChatSuccessState).messages; 
                 return Container(
                   width: double.maxFinite,
                   height: double.maxFinite,
@@ -90,14 +93,51 @@ class _HomePageState extends State<HomePage> {
                                                             ),
                                       color: messages[index].role == "user" ? const Color(0xFFfefefe): const Color(0xff7b70ee)
                                       ),
-                                      child:
+                                      child:Column(
+                                        children: [
                                           Text(
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: messages[index].role=="user"?const Color(0xFF635e8c):const Color(0xFFfefefe),
                                                 fontFamily: 'dekko'),
                                             messages[index].parts.first.text
+                                          ),
+                                          messages[index].role=='model'&&
+                                            (messages[index].parts.first.text.toLowerCase().contains("eligible")
+                                            ||messages[index].parts.first.text.toLowerCase().contains("eligibility"))
+                                            &&!(messages[index].parts.first.text.toLowerCase().contains("yes you are eligible")
+                                            ||messages[index].parts.first.text.toLowerCase().contains("you are not eligible" )
+                                            )
+                                            ?
+                                          Container(
+                                            padding: EdgeInsets.all(20),
+                                            child:ElevatedButton(
+                                            onPressed: () {
+                                              chatBloc.add(EligibiltyCheckEvent(index:index));
+                                            },
+                                            style: ButtonStyle(
+                                              backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                                                (Set<MaterialState> states) {
+                                                  if (states.contains(MaterialState.disabled)) {
+                                                    return Colors.grey; // Gray when disabled
+                                                  }
+                                                  return const Color(0xFFfefefe);
+                                                },
+                                              ),
+                                            ),
+                                            child: const Text(
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: const Color(0xFF635e8c),
+                                                    fontFamily: 'dekko'),
+                                                "Check Eligibilty"
+                                            ),
+                                            
                                           )
+                                          ): SizedBox()
+                                        ],
+                                      )
+                                          
                                       ),
                                   if (messages[index].role=="model")
                                    Expanded( child:Container()),
@@ -170,7 +210,115 @@ class _HomePageState extends State<HomePage> {
                     ],
                   )
                 );
+              case EligibiltyCheckState:
+                List<EliesModel> elies = (state as EligibiltyCheckState).elies; 
                 
+                answers = List<String>.filled(elies.length, " ");
+                // answers[2] = "No";
+
+                return Container(
+                  width: double.maxFinite,
+                  height: double.maxFinite,
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 100,
+                        
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: const Color(0xff7b70ee),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            "Check Eligibility",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFFfefefe),
+                                fontSize: 35,
+                                fontFamily: 'dekko'),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child:  Container(
+                          padding: EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: ListView.builder(
+                                  itemCount: elies.length,
+                                  itemBuilder: (context, index) {
+                                    
+                                    return QuestionWidget(
+                                      question: elies[index].question,
+                                      initialAnswer: answers[index],
+                                      onAnswerChanged: (String newAnswer) {
+                                        // setState(() {
+                                          answers[index] = newAnswer;
+                                        // });
+                                      }
+                                    );
+                                  },
+                                ),
+                              ),
+                              ElevatedButton(
+                                
+                                onPressed: () {
+                                  // Check eligibility
+                                  bool eligible = true; 
+                                  bool answeredAll = true; // Assume initially eligible
+                                  for (int i = 0; i < elies.length; i++) {
+                                    if(answers[i] == " "){
+                                      answeredAll = false;
+                                      break;
+                                    }
+                                    if (answers[i] != elies[i].answer) {
+                                      eligible = false;
+                                      break;
+                                    }
+                                  }
+                                    // Show Snackbar based on eligibility
+                                  if(!answeredAll){
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                        content: Text("please answer all the questions"+answers.toString()),
+                                      ));
+                                  }else{
+                                    chatBloc.add(EligibilityResultEvent(result: eligible ? "yes you are eligible":"you are not eligible"));
+                                  }
+                                  
+                                  
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Text(
+                                    style:  TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color:  const Color(0xFFfefefe),
+                                    fontFamily: 'dekko'
+                                  ),
+                                    'Submit'
+                                    ),
+                                ),
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                                    (Set<MaterialState> states) {
+                                      if (states.contains(MaterialState.disabled)) {
+                                        return Colors.grey; // Gray when disabled
+                                      }
+                                      return Color(0xff7b70ee);
+                                    },
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 20,)
+                            ],
+                          ),
+                        )
+                      )
+                    ],
+                  ),
+                );
               default:
                 return const SizedBox();
             }
@@ -179,3 +327,5 @@ class _HomePageState extends State<HomePage> {
       );
   }
 }
+
+
