@@ -280,9 +280,10 @@ class _HomePageState extends State<HomePage> {
                                     // Show Snackbar based on eligibility
                                   if(!answeredAll){
                                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                        content: Text("please answer all the questions"+answers.toString()),
+                                        content: Text("please answer all the questions"),
                                       ));
                                   }else{
+                                    answers = [];
                                     chatBloc.add(EligibilityResultEvent(result: eligible ? "yes you are eligible":"you are not eligible"));
                                   }
                                   

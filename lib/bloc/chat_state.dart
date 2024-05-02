@@ -16,3 +16,6 @@ class EligibiltyCheckState extends ChatState{
 
   EligibiltyCheckState({required this.elies});
 }
+class InitState extends ChatState{
+  
+}

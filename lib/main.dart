@@ -1,5 +1,7 @@
 import "package:flutter/material.dart";
 import "package:nibba/pages/home_page.dart";
+import "package:nibba/pages/init_page.dart";
+// import 'package:splashscreen/splashscreen.dart'; 
 
 void main() => runApp(new MyApp());
 
@@ -19,3 +21,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
