@@ -4,6 +4,7 @@ import 'package:nibba/bloc/chat_bloc.dart';
 import 'package:nibba/models/chat_message_model.dart';
 import 'package:nibba/models/elies_model.dart';
 import 'package:nibba/pages/questionWidget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -52,15 +53,41 @@ class _HomePageState extends State<HomePage> {
                           borderRadius: BorderRadius.circular(15),
                           color: const Color(0xff7b70ee),
                         ),
-                        child: const Center(
-                          child: Text(
-                            "Nibba",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFFfefefe),
-                                fontSize: 35,
-                                fontFamily: 'dekko'),
-                          ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: const Center(
+                                child: Text(
+                                  "Nibba",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFFfefefe),
+                                      fontSize: 35,
+                                      fontFamily: 'dekko'),
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: (){
+                                print("opening dialer");
+                                _makePhoneCall('1100'); 
+                              },
+                              child: Container(
+                                margin: EdgeInsets.all(30),
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Color(0xFFfefefe),
+                                ),
+                                child: Icon(
+                                  Icons.call,
+                                  color:  Color(0xFF584cd7),
+                                ),
+                              ),
+                              
+                            )
+                            
+                          ],
                         ),
                       ),
                       Expanded(
@@ -330,3 +357,11 @@ class _HomePageState extends State<HomePage> {
 }
 
 
+Future<void> _makePhoneCall(String phoneNumber) async {
+  final url = 'tel:$phoneNumber';
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}

@@ -16,7 +16,7 @@ class ChatRepo{
     
     try{
       print( previousMessages.map((e) => e.toMap()).toList() );
-      final response = await dio.post("http://localhost/chat/",
+      final response = await dio.post("http://nibba-api-v3.f0hqc7a6fxfbchg4.centralindia.azurecontainer.io/chat/",
         data: {
           "contents": previousMessages.map((e) => e.toMap()).toList() 
 
@@ -40,7 +40,7 @@ class ChatRepo{
     try{
       List<ChatMessageModel> message = previousMessages.sublist(0,previousMessages.length-1);
       
-      final response = await dio.post("http://localhost/chat/",
+      final response = await dio.post("http://nibba-api-v3.f0hqc7a6fxfbchg4.centralindia.azurecontainer.io/chat/",
         data: {
           "contents": message.map((e) => e.toMap()).toList() 
 
